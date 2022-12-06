@@ -1,0 +1,715 @@
+Q1. How do you load a CSV file into a Pandas DataFrame?
+### Answer
+A simple way to store big data sets is to use CSV files (comma separated files).
+CSV files contains plain text and is a well know format that can be read by everyone.
+
+We have multiple way to read a CSV file.
+
+1. If the CSV file is stored in the Local Machine
+### Code :-
+import os 
+import pandas as pd  # Importing a python library called pandas using a alias ( pd )
+
+data_frame = pd.read_csv('demo.csv') # using a file called demo.csv to show how its imported
+
+2. Directly import the CSV file using the URL
+### Code:-
+import pandas as pd
+data_frame = pd.read_csv('https://example.com/passkey=wedsmdjsjmdd')
+
+Q2. How do you check the data type of a column in a Pandas DataFrame?
+### Answer
+We can use the build in funtion in pandas called ( dtype )
+The singular form dtype is used to check the data type for a single column. And the plural form dtypes is for data frame which returns data types for all columns.
+
+### code with output:- 
+
+import pandas as pd
+df = pd.DataFrame({'A': [1,2,3], 'B': [True, False, False], 'C': ['a', 'b', 'c']})
+
+df.A.dtype
+# dtype('int64')
+df.B.dtype
+# dtype('bool')
+df.C.dtype
+# dtype('O')  ( 'O' Refered to object as any type of string is refered as object data type in pandas )
+
+df.dtypes
+#A     int64
+#B      bool
+#C    object
+#dtype: object
+
+
+Q3. How do you select rows from a Pandas DataFrame based on a condition?
+### Answer
+Creating a dummy data set for better understanding. 
+import pandas as pd
+import numpy as np
+df = pd.DataFrame()
+df['Name'] = ['John', 'Doe', 'Bill','Jim','Harry','Ben']
+df['TotalMarks'] = [82, 38, 63,22,55,40]
+df['Grade'] = ['A', 'E', 'B','E','C','D']
+df['Promoted'] = [True, False,True,False,True,True]
+df
+
+### OUTPUT:- 
+    Name  TotalMarks Grade  Promoted
+0   John          82     A      True
+1    Doe          38     E     False
+2   Bill          63     B      True
+3    Jim          22     E     False
+4  Harry          55     C      True
+5    Ben          40     D      True
+
+* Selecting rows using [] ( Slicing method )
+df[2:4]
+   Name  TotalMarks Grade  Promoted
+2  Bill          63     B      True
+3   Jim          22     E     False
+
+* Selecting using column with Silicing method
+df[2:4][['TotalMarks', 'Grade']]
+   TotalMarks Grade
+2          63     B
+3          22     E
+
+* Selecting rows using loc[]
+df.iloc[2:4]
+   Name  TotalMarks Grade  Promoted
+2  Bill          63     B      True
+3   Jim          22     E     False
+
+* Selecting rows based on condition using loc[]
+df.loc[df['Grade'] == 'E']
+  Name  TotalMarks Grade  Promoted
+1  Doe          38     E     False
+3  Jim          22     E     False
+
+* Selecting using multiple conditions with & operator
+df.loc[(df['TotalMarks'] >= 50) & (df['TotalMarks'] <= 79)]
+  Name  TotalMarks Grade  Promoted
+2 Bill          63     B      True
+4 Harry         55     C      True
+
+* Using Dataframe.query() method 
+df.query('Grade == "A"  Grade == "B"  ')
+    Name  TotalMarks Grade  Promoted
+0   John          82     A      True
+2   Bill          63     B      True
+
+
+Q4. How do you rename columns in a Pandas DataFrame?
+There are multiple method to rename a column in pandas.
+
+Method 1: Using rename() function.
+df = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6]})
+df.rename(columns={"A": "a", "B": "c"})
+   a  c
+0  1  4
+1  2  5
+2  3  6
+
+Method 2: Rename column names using DataFrame set_axis() function
+
+df.set_axis(['A', 'B', 'C'], axis='columns', inplace=True)
+
+Method 3: Rename column names using DataFrame add_prefix() and add_suffix() functions
+df = df.add_prefix('column_')
+df = df.add_suffix('_1')
+
+Method 4: Replace specific texts of column names using Dataframe.columns.str.replace function
+df.columns = df.columns.str.replace('a', 'A')
+
+
+Q5. How do you drop columns in a Pandas DataFrame?
+### Answer
+We can use the inbuilt method called drop()
+df = pd.DataFrame(np.arange(12).reshape(3, 4),columns=['A', 'B', 'C', 'D'])
+df
+
+   A  B   C   D
+0  0  1   2   3
+1  4  5   6   7
+2  8  9  10  11
+
+### OUTPUT:-
+df.drop(['B', 'C'], axis=1)
+   A   D
+0  0   3
+1  4   7
+2  8  11
+
+Q6. How do you find the unique values in a column of a Pandas DataFrame?
+We can use 2 method to get the unique values in column of a Pandas DataFrame.
+1) Using unique() method
+pandas.DataFrame().unique() method is used when we deal with a single column of a DataFrame and returns all unique elements of a column. The method returns a DataFrame containing the unique elements of a column, along with their corresponding index labels.
+
+### Code:- 
+import pandas as pd
+
+data = {
+  "Students": ["Ray", "John", "Mole", "Smith", "Jay", "Milli", "Tom", "Rick"],
+  "Subjects": ["Maths", "Economics", "Science", "Maths", "Statistics", "Statistics", "Statistics", "Computers"]
+}
+
+#load data into a DataFrame object:
+df = pd.DataFrame(data)
+
+print(df["Subjects"].unique())
+
+### OUTPUT:-
+['Maths' 'Economics' 'Science' 'Statistics' 'Computers']
+
+2) Using the drop_duplicates method
+drop_duplicates() is an in-built function in the panda's library that helps to remove the duplicates from the dataframe. It helps to preserve the type of the dataframe object or its subset and removes the rows with duplicate values. When it comes to dealing with the large set of dataframe, using the drop_duplicate() method is considered to be the faster option to remove the duplicate values.
+
+* Note this method will remove all the duplicate values from the data frame.
+### Code:-
+data = {
+  "Students": ["Ray", "John", "Mole", "Smith", "Jay", "Milli", "Tom", "Rick"],
+  "Subjects": ["Maths", "Economics", "Science", "Maths", "Statistics", "Statistics", "Statistics", "Computers"]
+}
+
+#load data into a DataFrame object:
+df = pd.DataFrame(data)
+
+df_new = df.drop_duplicates(subset = "Subjects")
+print(df_new["Subjects"])
+
+### OUTPUT:-
+['Maths' 'Economics' 'Science' 'Statistics' 'Computers']
+
+
+Q7. How do you find the number of missing values in each column of a Pandas DataFrame?
+* We can use the isna() method in combination with the sum() method to aggregate and find all the null values
+* we can also use the info() method which will give us a detail report but it's not very effective way
+
+### Code Example:-
+print(df)
+     a    b  c
+0  NaN  7.0  2
+1  0.0  NaN  4
+2  2.0  NaN  4
+3  1.0  7.0  5
+
+df.isnull().sum()
+a    1
+b    2
+c    0
+dtype: int64
+
+
+Q8. How do you fill missing values in a Pandas DataFrame with a specific value?
+1. Use the fillna() Method
+The fillna() function iterates through your dataset and fills all empty rows with a specified value. This could be the mean, median, modal, or any other value.
+
+Fill Missing Values With Mean, Median, or Mode
+This method involves replacing missing values with computed averages. Filling missing data with a mean or median value is applicable when the columns involved have integer or float data types.
+
+You can also fill in missing data with the mode value, which is the most occurring value. This is also applicable to integers or floats.
+
+#### Syntax :- 
+df.fillna({"A":df['A'].mean(),
+"B": df['B'].median(),
+"C": df['C'].mode()[0]},
+inplace=True)
+print(df)
+
+2. The replace() Method
+This method is handy for replacing values other than empty cells, as it's not limited to Nan values. It alters any specified value within the DataFrame.
+
+However, like the fillna() method, you can use replace() to replace the Nan values in a specific column with the mean, median, mode, or any other value. And it also accepts the inplace keyword argument.
+
+#### Syntax:- 
+import pandas
+import numpy
+
+df['A'].replace([numpy.nan], df['A'].mean(), inplace=True)
+
+df['B'].replace([numpy.nan], df['B'].median(), inplace=True)
+
+df['C'].replace([numpy.nan], df['C'].mode()[0], inplace=True)
+print(df)
+
+3. Fill Missing Data With interpolate()
+The interpolate() function uses existing values in the DataFrame to estimate the missing rows. Setting the inplace keyword to True alters the DataFrame permanently.
+
+#### Syntax:- 
+
+df.interpolate(method ='linear', limit_direction ='backward', inplace=True)
+df.interpolate(method ='linear', limit_direction ='forward', inplace=True)
+
+Q9. How do you concatenate two Pandas DataFrames?
+We can use Pandas method called :-
+pd.concat() method into which we can pass 2 or more dataFrame in the form of a list and mention in which axis you want to concat, i.e. axis=0 to concat along rows, axis=1 to concat along columns.
+
+### Code:- 
+import pandas as pd
+import numpy as np
+ 
+df1 = pd.DataFrame([['a', 1], ['b', 2]],columns=['letter', 'number'])
+
+df1
+  letter  number
+0      a       1
+1      b       2
+
+df2 = pd.DataFrame([['c', 3], ['d', 4]],columns=['letter', 'number'])
+
+df2
+  letter  number
+0      c       3
+1      d       4
+
+pd.concat([df1, df2])
+
+### Output:-
+
+  letter  number
+0      a       1
+1      b       2
+0      c       3
+1      d       4
+
+Q10. How do you merge two Pandas DataFrames on a specific column?
+
+We can use Pandas method called merge() to merge Two DataFrame.
+
+It consist of following paramters.
+* right: The other DataFrame to merge with the source DataFrame.
+* how: {‘left’, ‘right’, ‘outer’, ‘inner’}, default ‘inner’. This is the most important parameter to define the merge operation type. These are similar to SQL left outer join, right outer join, full outer join, and inner join.
+* on: Column or index level names to join on. These columns must be present in both the DataFrames. If not provided, the intersection of the columns in both DataFrames are used.
+* left_on: Column or index level names to join on in the left DataFrame.
+* right_on: Column or index level names to join on in the right DataFrame.
+* left_index: Use the index from the left DataFrame as the join key(s).
+* right_index: Use the index from the right DataFrame as the join key.
+* sort: Sort the join keys lexicographically in the result DataFrame.
+* suffixes: Suffix to apply to overlapping column names in the left and right side, respectively.
+* indicator: If True, adds a column to output DataFrame called “_merge” with information on the source of each row.
+v* alidate: used to validate the merge process. The valid values are {“one_to_one” or “1:1”, “one_to_many” or “1:m”, “many_to_one” or “m:1”, “many_to_many” or “m:m”}.
+
+### USING INNER JOIN
+import pandas as pd
+
+d1 = {'Name': ['Pankaj', 'Meghna', 'Lisa'], 'ID': [1, 2, 3], 'Country': ['India', 'India', 'USA'],
+      'Role': ['CEO', 'CTO', 'CTO']}
+df1 = pd.DataFrame(d1)
+
+df2 = pd.DataFrame({'ID': [1, 2, 3], 'Name': ['Pankaj', 'Anupam', 'Amit']})
+
+print(df1.merge(df2, on='ID'))
+print(df1.merge(df2, on='Name'))
+
+### OUTPUT:- 
+   Name_x  ID Country Role  Name_y
+0  Pankaj   1   India  CEO  Pankaj
+1  Meghna   2   India  CTO  Anupam
+2    Lisa   3     USA  CTO    Amit
+
+     Name  ID_x Country Role  ID_y
+0  Pankaj     1   India  CEO     1
+
+
+Q11. How do you group data in a Pandas DataFrame by a specific column and apply an aggregation function?
+We can use the Pandas groubby method() to group data and then apply a aggregate function to the numberical coulmun values to get desired reults. 
+
+### Exaple code:- 
+df = pd.DataFrame({'Animal': ['Falcon', 'Falcon','Parrot', 'Parrot'],
+            'Max Speed': [380., 370., 24., 26.]})
+df
+
+   Animal  Max Speed
+0  Falcon      380.0
+1  Falcon      370.0
+2  Parrot       24.0
+3  Parrot       26.0
+
+df.groupby(['Animal']).mean()
+        Max Speed
+Animal
+Falcon      375.0
+Parrot       25.0
+
+Q12. How do you pivot a Pandas DataFrame?
+The pivot() function is used to reshaped a given DataFrame organized by given index / column values. This function does not support data aggregation, multiple values will result in a MultiIndex in the columns.
+
+#### SYNTAX:- DataFrame.pivot(self, index=None, columns=None, values=None)
+
+### Code example:- 
+df = pd.DataFrame({'foo': ['one', 'one', 'one', 'two', 'two','two'],
+                   'bar': ['A', 'B', 'C', 'A', 'B', 'C'],
+                   'baz': [1, 2, 3, 4, 5, 6],
+                   'zoo': ['x', 'y', 'z', 'q', 'w', 't']})
+df
+    foo   bar  baz  zoo
+0   one   A    1    x
+1   one   B    2    y
+2   one   C    3    z
+3   two   A    4    q
+4   two   B    5    w
+5   two   C    6    t
+
+df.pivot(index='foo', columns='bar', values='baz')
+bar  A   B   C
+foo
+one  1   2   3
+two  4   5   6
+
+
+Q13. How do you change the data type of a column in a Pandas DataFrame?
+
+Method 1:- DataFrame.astype() method is used to cast pandas object to a specified dtype. This function also provides the capability to convert any suitable existing column to a categorical type.
+import pandas as pd
+ 
+### sample code:- 
+df = pd.DataFrame({
+    'A': [1, 2, 3, 4, 5],
+    'B': ['a', 'b', 'c', 'd', 'e']})
+
+df= df.astype(str) # Converting all the column data stype as 
+print(df.dtypes)
+
+### OUTPUT:- 
+A object
+B onject
+dtype: object
+
+Q14. How do you sort a Pandas DataFrame by a specific column?
+### Answer:-
+
+We can use pandas method DataFrame.sort_values() to sort a column. We can also sort them according to some specific condition i.e. Ascending or Descending
+
+### code:- 
+df
+  col1  col2  col3 col4
+0    A     2     0    a
+1    A     1     1    B
+2    B     9     9    c
+3  NaN     8     4    D
+4    D     7     2    e
+5    C     4     3    F
+
+### OUTPUT:- 
+df.sort_values(by='col1', ascending=False)
+  col1  col2  col3 col4
+4    D     7     2    e
+5    C     4     3    F
+2    B     9     9    c
+0    A     2     0    a
+1    A     1     1    B
+3  NaN     8     4    D
+
+Q15. How do you create a copy of a Pandas DataFrame?
+### Answer:-
+DataFrame.copy()
+We can use pandas build in method called DataFrame.copy() to create a copy of original dataframe. This method is used we need to perform some operations on the dataframe but dont want to ruin the original dataframe.  
+
+### Syntax :- copy_df = DataFrame.copy()
+
+Q16. How do you filter rows of a Pandas DataFrame by multiple conditions?
+We can filter rows based on multiple condition with using Condition operators such as AND / OR etc. in combination with method such as Slicing , iloc , loc. 
+### code example:- 
+
+import pandas as pd
+dataFrame = pd.DataFrame({'Name': [' RACHEL  ', ' MONICA  ', ' PHOEBE  ',
+                                   '  ROSS    ', 'CHANDLER', ' JOEY    '],
+                           
+                          'Age': [30, 35, 37, 33, 34, 30],
+                           
+                          'Salary': [100000, 93000, 88000, 120000, 94000, 95000],
+                           
+                          'JOB': ['DESIGNER', 'CHEF', 'MASUS', 'PALENTOLOGY',
+                                  'IT', 'ARTIST']})
+
+display(dataFrame.loc[(dataFrame['Salary']>=100000) & (dataFrame['Age']< 40) & (dataFrame['JOB'].
+                str.startswith('D')),['Name','JOB']])
+
+### OUTPUT:- 
+
+      Name       JOB
+0   Rachel  Designer
+
+
+Q17. How do you calculate the mean of a column in a Pandas DataFrame?
+We can use the Pandas method ie .mean() to find mean of a numeric column
+
+### Code:- 
+
+import pandas as pd
+technologies = {
+    'Courses':["Spark","PySpark","Python","pandas",None],
+    'Fee' :[20000,25000,22000,None,30000],
+    'Duration':['30days','40days','35days','None','50days'],
+    'Discount':[1000,2300,1200,2000,None]
+              }
+index_labels=['r1','r2','r3','r4','r5']
+df = pd.DataFrame(technologies,index=index_labels)
+print(df)
+
+Courses      Fee Duration  Discount
+r1    Spark  20000.0   30days    1000.0
+r2  PySpark  25000.0   40days    2300.0
+r3   Python  22000.0   35days    1200.0
+r4   pandas      NaN     None    2000.0
+r5     None  30000.0   50days       NaN
+
+df2 = df["Fee"].mean()
+print(df2)
+24250.0
+
+* Note we can do this for multiple column also by passing the column name in the form of  a list
+
+Q18. How do you calculate the standard deviation of a column in a Pandas DataFrame?
+We can use the DataFrame.std() function to calculate the standard deviation of values in a pandas DataFrame.
+
+### Code:- 
+import pandas as pd
+
+#create DataFrame
+df = pd.DataFrame({'team': ['A', 'A', 'B', 'B', 'B', 'B', 'C', 'C'],
+                   'points': [25, 12, 15, 14, 19, 23, 25, 29]})
+
+print(df)
+
+	team	points	
+0	   A	    25	
+1	   A	    12	
+2	   B	    15	
+3	   B	    14
+4	   B	    19	
+5	   B	    23	
+6	   C	    25
+7	   C	    29
+
+df['points'].std() 
+
+6.158617655657106
+
+* Note we can do this for multiple column also by passing the column name in the form of  a list
+
+Q19. How do you calculate the correlation between two columns in a Pandas DataFrame?
+### Answer
+We can use corr() function we can get the correlation between two columns in the dataframe.
+
+### Code:-
+import pandas as pd
+
+data = pd.DataFrame({
+    "column1": [12, 23, 45, 67],
+    "column2": [67, 54, 32, 1],
+    "column3": [34, 23, 56, 23]
+}
+)
+print(data)
+
+print(data['column1'].corr(data['column2']))
+
+Output:
+
+   column1  column2  column3
+0       12       67       34
+1       23       54       23
+2       45       32       56
+3       67        1       23
+
+-0.9970476685163736
+
+Q20. How do you select specific columns in a DataFrame using their labels?
+### Answer
+In pandas documents, the term label is used as if it is granted that we know what it is, such as in Indexing and selecting data.
+The axis labeling information in pandas objects serves many purposes:
+pandas provides a suite of methods in order to have purely label based indexing.
+
+By using DataFrame.loc[] and DataFrame.iloc[] to select a single column or multiple columns from pandas DataFrame by column names/label or index position respectively. where loc[] is used with column labels/names and iloc[] is used with column index/position.
+
+Q21. How do you select specific rows in a DataFrame using their indexes?
+By using DataFrame.loc[] and DataFrame.iloc[] to select a single column or multiple columns from pandas DataFrame by column names/label or index position respectively. where loc[] is used with column labels/names and iloc[] is used with column index/position.
+
+### Code:-
+df
+    Name  TotalMarks Grade  Promoted
+0   John          82     A      True
+1    Doe          38     E     False
+2   Bill          63     B      True
+3    Jim          22     E     False
+4  Harry          55     C      True
+5    Ben          40     D      True
+
+* Selecting rows using [] ( Slicing method )
+df[2:4]
+   Name  TotalMarks Grade  Promoted
+2  Bill          63     B      True
+3   Jim          22     E     False
+
+* Selecting rows using loc[]
+df.iloc[2:4]
+   Name  TotalMarks Grade  Promoted
+2  Bill          63     B      True
+3   Jim          22     E     False
+
+* Selecting rows using iloc[]
+df.iloc[0]
+John
+82
+A
+True
+
+
+Q22. How do you sort a DataFrame by a specific column?
+### Answer:-
+We can use pandas method DataFrame.sort_values() to sort a column. We can also sort them according to some specific condition i.e. Ascending or Descending
+
+### code:- 
+df
+  col1  col2  col3 col4
+0    A     2     0    a
+1    A     1     1    B
+2    B     9     9    c
+3  NaN     8     4    D
+4    D     7     2    e
+5    C     4     3    F
+
+### OUTPUT:- 
+df.sort_values(by='col1', ascending=False)
+  col1  col2  col3 col4
+4    D     7     2    e
+5    C     4     3    F
+2    B     9     9    c
+0    A     2     0    a
+1    A     1     1    B
+3  NaN     8     4    D
+
+Q23. How do you create a new column in a DataFrame based on the values of another column?
+We can create a new DataFrame using 
+* copy() method:- 
+This method is used to create a new DataFrame which would be exact copy of the original DataFrame any changes made in the copy wont affect the original DataFrame.
+
+### Sameple Dataset 
+print(df)
+   colA   colB  colC   colD  colE
+0     1  Hello   158   True  12.8
+1     2    Hey   567  False  74.2
+2     3     Hi   123  False   1.1
+3     4  Howdy   578   True  45.8
+4     5  Hello   418   True  21.1
+5     6     Hi    98  False  98.1
+
+* apply() method
+If you need to apply a method over an existing column in order to compute some values that will eventually be added as a new column in the existing DataFrame, then pandas.DataFrame.apply() method should do the trick.
+### code Example:- 
+def categorise(row):  
+    if row['colC'] > 0 and row['colC'] <= 99:
+        return 'A'
+    elif row['colC'] > 100 and row['colC'] <= 199:
+        return 'B'
+    elif row['colC'] > 200  and row['colC'] <= 299:
+        return 'C'
+    return 'D'
+
+df['colF'] = df.apply(lambda row: categorise(row), axis=1)
+
+print(df)
+   colA   colB  colC   colD  colE colF
+0     1  Hello   158   True  12.8    B
+1     2    Hey   567  False  74.2    D
+2     3     Hi   123  False   1.1    B
+3     4  Howdy   578   True  45.8    D
+4     5  Hello   418   True  21.1    D
+5     6     Hi    98  False  98.1    A
+
+
+* numpy.select() method (for a vectorised approach):- 
+
+### Code:-
+import numpy as np
+conditions = [
+  np.logical_and(df['colC'].gt(0), np.less_equal(df['colC'], 99)),
+  np.logical_and(df['colC'].gt(100), np.less_equal(df['colC'],199)),
+  np.logical_and(df['colC'].gt(200), np.less_equal(df['colC'],299)),
+]
+outputs = ['A', 'B', 'C']
+
+df['colF'] = pd.Series(np.select(conditions, outputs, 'D'))
+
+print(df)
+    colA   colB  colC   colD  colE colF
+0     1  Hello   158   True  12.8    B
+1     2    Hey   567  False  74.2    D
+2     3     Hi   123  False   1.1    B
+3     4  Howdy   578   True  45.8    D
+4     5  Hello   418   True  21.1    D
+5     6     Hi    98  False  98.1    A
+
+* loc property:-
+the loc property that in some occasions might be more efficient compared to apply() method. Note that this approach may also be a little bit more verbose compared to the solutions we discussed previously.
+### Code:- 
+df.loc[
+  np.logical_and(df['colC'].gt(0), np.less_equal(df['colC'], 99)), 
+  'colF'
+] = 'A'
+df.loc[
+  np.logical_and(df['colC'].gt(100), np.less_equal(df['colC'], 199)),'colF'
+] = 'B'
+df.loc[
+  np.logical_and(df['colC'].gt(200), np.less_equal(df['colC'], 299)),'colF'
+] = 'C'
+df['colF'].fillna('D', inplace=True)
+
+print(df)
+   colA   colB  colC   colD  colE colF
+0     1  Hello   158   True  12.8    B
+1     2    Hey   567  False  74.2    D
+2     3     Hi   123  False   1.1    B
+3     4  Howdy   578   True  45.8    D
+4     5  Hello   418   True  21.1    D
+5     6     Hi    98  False  98.1    A
+
+
+Q24. How do you remove duplicates from a DataFrame?
+### Answer
+
+We can use DataFrame.drop_duplicates() method to remove the duplicates value in the DataFrame
+### Code Example:- 
+
+df
+    brand style  rating
+0  Yum Yum   cup     4.0
+1  Yum Yum   cup     4.0
+2  Indomie   cup     3.5
+3  Indomie  pack    15.0
+4  Indomie  pack     5.0
+
+df.drop_duplicates()
+    brand style  rating
+0  Yum Yum   cup     4.0
+2  Indomie   cup     3.5
+3  Indomie  pack    15.0
+4  Indomie  pack     5.0
+
+
+Q25. What is the difference between .loc and .iloc in Pandas?
+By using DataFrame.loc[] and DataFrame.iloc[] to select a single column or multiple columns from pandas DataFrame by column names/label or index position respectively. where loc[] is used with column labels/names and iloc[] is used with column index/position.
+
+### Code Example:- 
+df
+    Name  TotalMarks Grade  Promoted
+0   John          82     A      True
+1    Doe          38     E     False
+2   Bill          63     B      True
+3    Jim          22     E     False
+4  Harry          55     C      True
+5    Ben          40     D      True
+
+* Selecting rows using loc[]
+df.iloc[2:4]
+   Name  TotalMarks Grade  Promoted
+2  Bill          63     B      True
+3   Jim          22     E     False
+
+* Selecting rows using iloc[]
+df.iloc[0]
+John
+82
+A
+True
